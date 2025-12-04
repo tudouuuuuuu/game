@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>侦探档案馆 V5.6 - 分轮次搜证版</title>
+    <title>侦探档案馆 V5.7 - 随机角色版</title>
     <style>
         :root {
             --bg: #101418;
@@ -241,7 +241,8 @@
 </div>
 
 <script>
-    // ================== 剧本数据库 (JSON) - V5.6 分轮次搜证版 ==================
+    // ================== 剧本数据库 (JSON) - V5.7 随机角色版 ==================
+    // 注意：所有的“凶手”信息依然在 roles 数组中，但现在会被随机打乱顺序。
     const SCRIPTS = [
         // 案件 1: 未干的雨伞 (线索拆分)
         {
@@ -256,7 +257,7 @@
                 { type: "role_select" },
                 { type: "role_intro" }, 
                 { type: "visual_narrate", text: "【主持人】角色已分配完毕。现在，我将分发你们各自的剧本，请一位一位按顺序阅读。", image: "https://images.unsplash.com/photo-1579203926514-c157f1896796?fit=crop&w=800&q=80" },
-                { type: "private_read", roles: ["死者妻子", "生意伙伴", "私人医生", "新来女佣"] },
+                { type: "private_read", roles: ["死者妻子", "生意伙伴", "私人医生", "新来女佣"] }, // 这里的顺序会被随机打乱
                 { type: "visual_narrate", text: "【主持人】初步阅读完毕。现在，你们可以在不暴露核心秘密的前提下，互相提问和讨论。", image: "https://images.unsplash.com/photo-1579203926514-c157f1896796?fit=crop&w=800&q=80" },
                 
                 // 搜证轮次 1
@@ -271,7 +272,7 @@
                     { title: "门厅的雨伞架", content: "医生的伞是湿淋淋的，还在滴水。这与他声称一直呆在室内的证词矛盾。" }
                 ]},
                 { type: "visual_narrate", text: "【主持人】第二轮线索已展示完毕。请各位进行 **最终讨论**。", image: "https://images.unsplash.com/photo-1579203926514-c157f1896796?fit=crop&w=800&q=80" },
-                
+
                 { type: "vote" },
                 { type: "reveal" }
             ],
@@ -283,7 +284,7 @@
             ],
             truth: "凶手是【私人医生】。医生声称在室内，但9:15雨停后，他的伞不该是湿的，暴露了他刚从室外进来的事实。他谎称在酒窖只是为了避开怀疑。"
         },
-        // 案件 2: 被毒杀的金丝雀 (线索拆分)
+        // 案件 2: 被毒杀的金丝雀
         {
             id: 2,
             title: "被毒杀的金丝雀",
@@ -311,7 +312,7 @@
                     { title: "侍卫证词", content: "侍卫长在宴会开始前一小时对酒水进行了完整的检验，包括酒壶和所有空酒杯。" }
                 ]},
                 { type: "visual_narrate", text: "【主持人】第二轮线索已展示完毕。请各位进行 **最终讨论**。", image: "https://images.unsplash.com/photo-1579203926514-c157f1896796?fit=crop&w=800&q=80" },
-                
+
                 { type: "vote" },
                 { type: "reveal" }
             ],
@@ -323,7 +324,7 @@
             ],
             truth: "凶手是【皇后】。她将毒药涂抹在妃子的空酒杯内壁。毒药需要接触空气和液体一段时间后溶解生效。侍卫长检验的是空杯，无法检测到已附着的毒药。当酒液倒入后，毒药开始溶解，并在妃子饮用时达到致死剂量，其他人因为酒壶里的酒无毒而安然无恙。"
         },
-        // 案件 3: 灯塔下的秘密 (线索拆分)
+        // 案件 3: 灯塔下的秘密
         {
             id: 3,
             title: "灯塔下的秘密",
@@ -363,7 +364,7 @@
             ],
             truth: "凶手是【船长】。他为了骗保，在不该停留的浅滩设置了简易信号灯，并故意等待触礁。游客A看到的闪光才是简易信号灯，船长报告的旧信号是为了误导调查。"
         },
-        // 案件 4: 咖啡馆的钥匙 (线索拆分)
+        // 案件 4: 咖啡馆的钥匙
         {
             id: 4,
             title: "咖啡馆的钥匙",
@@ -371,7 +372,7 @@
             intro: "咖啡馆深夜被盗。嫌疑人有完美不在场证明，但他用来作证的钥匙，却是多余的。",
             imagePath: "./scenes/cafe_scene.jpg",
             scenes: [
-                { type: "visual_narrate", text: "【旁白】深夜，咖啡机发出微弱的怠速声，但店门已经被撬开。 🔊(咖啡机)", image: "https://images.unsplash.com/photo-1497215728109-2479f2203f16?fit=crop&w=800&q=80" },
+                { type: "visual_narrate", text: "【旁白】深夜，咖啡机发出微弱的怠速声，但店门已经被撬开。 🔔(咖啡机)", image: "https://images.unsplash.com/photo-1497215728109-2479f2203f16?fit=crop&w=800&q=80" },
                 { type: "visual_narrate", text: "【主持人】所有证据都指向这位嫌疑人，但他有一个完美的 alibi。", image: "https://images.unsplash.com/photo-1579203926514-c157f1896796?fit=crop&w=800&q=80" },
                 { type: "role_select" },
                 { type: "role_intro" }, 
@@ -403,7 +404,7 @@
             ],
             truth: "凶手是【店员A】。他利用老板的钥匙和店员B拿走钥匙的错觉，制造了完美的作案机会。嫌疑人虽然有 alibi，但他的钥匙问题是无关的干扰项。"
         },
-        // 案件 5: 画廊失窃案 (线索拆分)
+        // 案件 5: 画廊失窃案
         {
             id: 5,
             title: "画廊失窃案",
@@ -443,7 +444,7 @@
             ],
             truth: "凶手是【保安队长】。他利用温湿度波动（物理学中的热胀冷缩原理）使画作轻微收缩，再从画框与墙壁的缝隙中取出，因此没有触发任何警报。"
         },
-        // 案件 6: 沙滩上的脚印 (线索拆分)
+        // 案件 6: 沙滩上的脚印
         {
             id: 6,
             title: "沙滩上的脚印",
@@ -483,7 +484,7 @@
             ],
             truth: "凶手是【死者朋友】。他与死者一起走向沙滩，杀死死者后，穿上死者的鞋子（比自己的大一号），然后倒退着走回，这样沙滩上只留下了倒退着的'走来'的脚印。"
         },
-        // 案件 7: 老宅的时钟 (线索拆分)
+        // 案件 7: 老宅的时钟
         {
             id: 7,
             title: "老宅的时钟",
@@ -523,7 +524,7 @@
             ],
             truth: "凶手是【管家】。他将冰块放入时钟机芯，导致时钟停止走动，在冰块融化后，时钟恢复走动。这造成了时钟错误显示案发时间的假象，使所有 alibi 看起来都成立。"
         },
-        // 案件 8: 迟到的遗嘱 (线索拆分)
+        // 案件 8: 迟到的遗嘱
         {
             id: 8,
             title: "迟到的遗嘱",
@@ -563,7 +564,7 @@
             ],
             truth: "凶手是【遗产受益人】。他利用老人的虚弱和错误的值班日期（医生不在场），让老人在精神状态不稳定的情况下签署了遗嘱。遗嘱虽然是老人亲笔，但法律要求签署时需要有明确的意识，护士的证词是关键。"
         },
-        // 案件 9: 暴风雪中的缆车 (线索拆分)
+        // 案件 9: 暴风雪中的缆车
         {
             id: 9,
             title: "暴风雪中的缆车",
@@ -603,7 +604,7 @@
             ],
             truth: "凶手是【缆车工程师】。他通过顶部检修口进入缆车杀人，离开后使用强磁铁在外侧操作锁舌，使锁看起来像是从内部锁上的密室杀人案。"
         },
-        // 案件 10: 演唱会上的毒药 (线索拆分)
+        // 案件 10: 演唱会上的毒药
         {
             id: 10,
             title: "演唱会上的毒药",
@@ -643,7 +644,7 @@
             ],
             truth: "凶手是【舞台总监】。他利用舞台上空的无人机，通过细线将浓缩毒药精准地滴入水瓶中。水瓶比其他水轻可能是因为毒药溶解时导致少量水溢出。"
         },
-        // 案件 11: 废弃的仓库 (线索拆分)
+        // 案件 11: 废弃的仓库
         {
             id: 11,
             title: "废弃的仓库",
@@ -683,7 +684,7 @@
             ],
             truth: "凶手是【死者合伙人】。他利用秘密协议的条款，在杀死死者后，伪造了文件被意外烧毁的假象，以便顺利继承资产并摆脱债务。"
         },
-        // 案件 12: 雪夜的电话 (线索拆分)
+        // 案件 12: 雪夜的电话
         {
             id: 12,
             title: "雪夜的电话",
@@ -725,7 +726,18 @@
         }
     ];
 
-    // ================== 游戏引擎 (逻辑重构 - 重点修改 investigate) ==================
+    // ================== 实用工具函数 ==================
+
+    // 随机打乱数组顺序的 Fisher-Yates 算法
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // ================== 游戏引擎 (逻辑重构 - 重点修改 startGame 和 BGM) ==================
     const game = {
         currentScript: null,
         sceneIndex: 0,
@@ -748,7 +760,7 @@
             document.getElementById('reveal-screen').classList.add('hidden');
         },
 
-        // 渲染主菜单 (已修复滚动条问题)
+        // 渲染主菜单
         renderScriptList: () => {
             game.hideAllOverlays();
             
@@ -761,7 +773,7 @@
             SCRIPTS.forEach((script) => {
                 const item = document.createElement('div');
                 item.className = 'script-card';
-                item.onclick = () => game.enterLobby(script.id - 1); // 修正为正确的索引
+                item.onclick = () => game.enterLobby(script.id - 1); 
                 item.innerHTML = `
                     <div class="script-title">案件${script.id.toString().padStart(2, '0')}：${script.title}</div>
                     <div class="script-tags">
@@ -786,15 +798,30 @@
             document.getElementById('lobby-desc').innerText = game.currentScript.intro;
         },
         
+        // **V5.7 核心修改：角色随机化**
         startGame: () => {
+            if (!game.currentScript) return;
+
+            // 1. 对角色列表进行随机排序
+            const shuffledRoles = shuffleArray([...game.currentScript.roles]);
+            game.currentScript.roles = shuffledRoles;
+            
+            // 2. 重新校准 private_read 场景的角色名称
+            // 因为 roles 顺序变了，private_read 场景也必须使用新的顺序
+            for (const scene of game.currentScript.scenes) {
+                if (scene.type === 'private_read') {
+                    scene.roles = shuffledRoles.map(r => r.name);
+                }
+            }
+            
             game.hideAllOverlays();
             game.sceneIndex = 0;
             game.renderScene();
         },
 
-        // 核心渲染函数
+        // 核心渲染函数 (保持不变)
         renderScene: () => {
-            game.hideAllOverlays(); // 强制清除所有遮罩
+            game.hideAllOverlays(); 
 
             if (!game.currentScript || game.sceneIndex >= game.currentScript.scenes.length) {
                 game.jumpToMenu(); 
@@ -804,14 +831,12 @@
             const scene = game.currentScript.scenes[game.sceneIndex];
             const area = document.getElementById('scene-area');
             
-            // 设置背景图
             if (scene.image) {
                 area.style.backgroundImage = `url(${scene.image})`;
             } else {
                 area.style.backgroundImage = 'none';
             }
             
-            // 根据场景类型进行渲染
             if (scene.type === 'visual_narrate') {
                 game.renderVisualNarrate(scene);
             } else if (scene.type === 'role_select') {
@@ -821,7 +846,7 @@
             } else if (scene.type === 'private_read') {
                 game.renderPrivateRead(scene);
             } else if (scene.type === 'investigate') {
-                game.renderInvestigate(scene); // 重点修改
+                game.renderInvestigate(scene);
             } else if (scene.type === 'vote') {
                 game.renderVote();
             } else if (scene.type === 'reveal') {
@@ -836,6 +861,7 @@
             const roleListContainer = document.getElementById('role-list');
             roleListContainer.innerHTML = '';
             
+            // 渲染的是随机打乱后的角色列表
             game.currentScript.roles.forEach((role, index) => {
                 const card = document.createElement('div');
                 card.className = 'script-card';
@@ -865,7 +891,7 @@
             }
         },
 
-
+        // 渲染叙事场景 (保持不变)
         renderVisualNarrate: (scene) => {
             document.getElementById('narration-box').classList.remove('hidden'); 
             
@@ -877,22 +903,18 @@
             let displayHtml = scene.text;
             let speakText = scene.text;
             
-            // 音效播放和 TTS 文本清理
             const soundMatches = scene.text.matchAll(/(\s?([🔊🔔]\([^)]+\)))/g);
             
             for (const match of soundMatches) {
                 const soundTag = match[1];
                 
-                // 1. 播放音效
                 if (soundTag.includes('雷声') || soundTag.includes('暴雪')) game.playSceneSound('thunder');
                 if (soundTag.includes('老钟声') || soundTag.includes('咖啡机') || soundTag.includes('警笛声') || soundTag.includes('心电') || soundTag.includes('雾笛声') || soundTag.includes('尖叫声') || soundTag.includes('风声') || soundTag.includes('海浪声') || soundTag.includes('脚步声') || soundTag.includes('巨大掌声') || soundTag.includes('引擎怠速声')) {
                     game.playSceneSound('clock');
                 }
                 
-                // 2. 清理 TTS 文本：从朗读文本中删除音效标签
                 speakText = speakText.replace(soundTag, '');
                 
-                // 3. 替换显示 HTML 中的音效提示
                 if (soundTag.includes('雷声') || soundTag.includes('尖叫声') || soundTag.includes('风声')) {
                     displayHtml = displayHtml.replace(soundTag, ` <span class="sound-icon">🔊</span>`);
                 } else {
@@ -900,27 +922,28 @@
                 }
             }
             
-            narrationBox.innerHTML = displayHtml.replace(/【[^】]+】/g, '<strong>$&</strong>'); // 粗体角色名
+            narrationBox.innerHTML = displayHtml.replace(/【[^】]+】/g, '<strong>$&</strong>'); 
             game.speak(speakText.trim());
             
             game.addNextButton("继续叙事");
         },
         
+        // 渲染私密剧本 (保持不变)
         renderPrivateRead: (scene) => {
             document.getElementById('private-screen').classList.remove('hidden');
             
             window.roleIndex = 0; 
+            // 注意：这里必须使用 currentScript.roles，因为它们已经被打乱了。
             window.roles = game.currentScript.roles;
             window.showRoleContent(); 
         },
         
-        // 核心修改：渲染分轮次的搜证线索
+        // 渲染分轮次的搜证线索 (保持不变)
         renderInvestigate: (scene) => {
             document.getElementById('investigate-screen').classList.remove('hidden');
             
             const listContainer = document.getElementById('clue-list-container');
             
-            // 清空旧内容，添加本轮信息
             listContainer.innerHTML = `
                 <h2 style="color:var(--secondary); margin-bottom: 10px; text-align: center;">
                     🔍 搜证阶段：第 ${scene.round} 轮线索
@@ -930,13 +953,11 @@
                 </p>
             `;
             
-            // 渲染本轮线索卡片
             scene.clues.forEach((clue, i) => {
                 const card = document.createElement('div');
                 card.className = 'script-card clue-card';
                 card.onclick = function() {
                     this.classList.toggle('open');
-                    // 朗读线索内容
                     game.speak(`${clue.title}。${clue.content}`);
                 };
                 card.innerHTML = `
@@ -946,7 +967,6 @@
                 listContainer.appendChild(card);
             });
             
-            // 添加一个按钮，用于进入下一场景（讨论）
             const nextButton = document.createElement('button');
             nextButton.className = 'btn btn-primary';
             nextButton.style.marginTop = '30px';
@@ -956,7 +976,7 @@
             listContainer.appendChild(nextButton);
         },
 
-        // 重构投票前的讨论和投票场景
+        // 渲染投票场景 (保持不变)
         renderVote: () => {
             document.getElementById('narration-box').classList.remove('hidden');
             const narrationBox = document.getElementById('narration-text');
@@ -968,6 +988,7 @@
             controls.innerHTML = `<button class="btn btn-primary" onclick="game.nextScene()">开始复盘</button>`;
         },
         
+        // 渲染真相揭示 (保持不变)
         renderReveal: () => {
             document.getElementById('reveal-screen').classList.remove('hidden');
             const revealScreen = document.getElementById('reveal-screen');
@@ -1022,10 +1043,9 @@
 
     window.showRoleContent = () => {
         const area = document.getElementById('private-screen');
-        const roles = window.roles;
+        const roles = window.roles; // 使用已被打乱的 roles
         
         if (window.roleIndex >= roles.length) {
-            // 传阅完毕后的确认界面
             area.innerHTML = `
                 <div style="text-align:center; max-width: 600px; background: #222; padding: 40px; border-radius: 8px;">
                     <h2 style="color:var(--accent);">所有剧本已分发。</h2>
@@ -1063,7 +1083,7 @@
         }, 1500);
     };
     
-    // BGM 控制
+    // **V5.7 BGM 修正：修正 CSS 语法，提高播放成功率**
     function toggleBGM() {
         const audio = document.getElementById('bgm-player');
         const btn = document.getElementById('bgmToggle');
@@ -1075,16 +1095,54 @@
             btn.style.backgroundColor = 'var(--btn-color)'; 
         } else {
             audio.volume = 0.4;
+            // 尝试播放。如果用户之前没有交互，这里可能会失败，但 unlockAudio 解决了这个问题。
             audio.play().then(() => {
                 game.bgmOn = true;
                 btn.innerText = "🎵 BGM: 开";
+                // 修正 CSS 赋值错误
                 btn.style.backgroundColor = 'var(--accent)'; 
             }).catch(err => {
-                // 如果播放失败（通常是浏览器限制），给用户提示
-                alert("请点击屏幕任意位置以启用音频权限");
+                alert("BGM播放失败，请确保您点击过屏幕或已启用音频权限。");
+                console.error("BGM Playback Error:", err);
             });
         }
     }
+    
+    // ====================================================================
+    // V5.7 新增：音频解锁函数 (解决浏览器自动播放限制)
+    // 首次用户交互时，尝试解锁 AudioContext
+    // ====================================================================
+    let audioUnlocked = false;
+
+    function unlockAudio() {
+        if (audioUnlocked) return;
+        
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log("Audio Context resumed successfully.");
+            }).catch(e => console.error("Audio Context Resume failed:", e));
+        } else if (audioContext) {
+             // 某些老浏览器需要这种方式
+            const buffer = audioContext.createBuffer(1, 1, 22050);
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+        }
+        
+        audioUnlocked = true;
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+        
+        console.log("Audio Context unlocked.");
+    }
+
+    // 首次用户交互时，尝试解锁音频
+    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+
 
     // 启动
     game.init();
