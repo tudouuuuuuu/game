@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE TML>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -393,7 +393,7 @@
         }
 
         /* ===================================================================
-           响应式调整 (手机屏幕修正 - 解决案件卡片消失问题)
+           **最终强化** 响应式调整 (手机屏幕修正)
            =================================================================== */
         @media (max-width: 768px) {
             
@@ -407,9 +407,10 @@
             }
             
             /* 案件列表修正：强制单列，解决手机上卡片消失的问题 */
+            /* 关键修复点：使用 !important 确保 Flexbox 规则覆盖所有可能的冲突 */
             .case-list {
-                display: flex; /* 改用 Flex 布局 */
-                flex-direction: column; /* 垂直堆叠 */
+                display: flex !important; /* 强制使用 Flex 布局 */
+                flex-direction: column !important; /* 强制垂直堆叠 */
                 gap: 15px; /* 间距 */
                 padding: 0;
             }
@@ -1002,6 +1003,7 @@
         },
         };
 
+
         // ===================================================================
         // 2. 核心功能函数 (Functions)
         // ===================================================================
@@ -1009,6 +1011,7 @@
         // TTS 功能 (Web Speech API)
         const synth = window.speechSynthesis;
         let chineseVoice = null;
+        
         /**
          * 改进的中文语音选择函数，优先选择柔和女声
          */
@@ -1024,7 +1027,7 @@
             
             // 1. 尝试查找特定优质中文女声 (zh-CN)
             let preferredVoice = voices.find(voice => 
-                voice.lang === 'zh-CN' && (
+                voice.lang.startsWith('zh-') && (
                     voice.name.includes('Ting-Ting') || // iOS/MacOS 常见优质女声
                     voice.name.includes('Tingting') || 
                     voice.name.includes('Mei-Jia') || // Google Chrome 优质女声
@@ -1046,6 +1049,7 @@
                     voice.lang === 'zh-CN' || 
                     voice.name.includes('Mandarin') || 
                     voice.name.includes('普通话') 
+                    
                 );
             }
 
@@ -1058,7 +1062,6 @@
             return chineseVoice;
         }
 
-
         function speakNarrative(text) {
             if (!game.ttsOn || !synth) return; 
 
@@ -1066,6 +1069,7 @@
                 synth.cancel();
             }
 
+            // 清理文本中的【旁白/主持人】和 markdown ** 加粗标记，以获得更流畅的朗读
             const cleanText = text.replace(/【[^】]+】/g, '').replace(/\*\*([^*]+)\*\*/g, '$1');
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -1116,7 +1120,7 @@
             }
             
             // 处理笔记区域的加载和同步
-            if (sceneId === 'scene-narrative' || sceneId === 'scene-clues') {
+            if (sceneId === 'scene-narrative' || sceneId === 'scene-clues' || sceneId === 'scene-reveal') {
                 loadNotes();
             }
         }
@@ -1229,9 +1233,7 @@
             // 隐藏常驻 UI 区域
             document.getElementById('persistent-ui-wrapper').style.display = 'none'; 
             
-            // 清空本地笔记 (可选，如果希望每次重开案件清空笔记)
-            localStorage.removeItem(NOTES_STORAGE_KEY);
-            loadNotes();
+            // 清空本地笔记 (实际上 loadNotes/saveNotes 已经实现了隔离，这里不需要强制清空)
         }
 
         // ===================================================================
