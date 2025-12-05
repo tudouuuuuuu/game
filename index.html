@@ -230,7 +230,7 @@
 
         /* 案件选择列表 */
         .case-list {
-            /* 关键修正：确保在 PC 上使用 grid，在手机上由媒体查询覆盖 */
+            /* 关键：PC 上使用 Grid 布局 */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -393,7 +393,7 @@
         }
 
         /* ===================================================================
-           响应式调整 (手机屏幕修正)
+           响应式调整 (手机屏幕修正 - 解决案件卡片消失问题)
            =================================================================== */
         @media (max-width: 768px) {
             
@@ -406,7 +406,7 @@
                 padding: 0 10px; 
             }
             
-            /* 案件列表修正：强制单列，并移除 Grid 属性确保兼容性 */
+            /* 案件列表修正：强制单列，解决手机上卡片消失的问题 */
             .case-list {
                 display: flex; /* 改用 Flex 布局 */
                 flex-direction: column; /* 垂直堆叠 */
@@ -1001,6 +1001,7 @@
             truth: '真凶：秘书·秦悦。她利用妻子铺垫的致幻剂基础和学生设计的视觉陷阱，用紫外线触发错觉，同时注射解药制造药物冲突，最终致死。这是一场协作下的完美谋杀。'
         },
         };
+
         // ===================================================================
         // 2. 核心功能函数 (Functions)
         // ===================================================================
@@ -1008,7 +1009,9 @@
         // TTS 功能 (Web Speech API)
         const synth = window.speechSynthesis;
         let chineseVoice = null;
-        
+        /**
+         * 改进的中文语音选择函数，优先选择柔和女声
+         */
         function getChineseVoice() {
             // 确保 voice 列表已加载
             if (synth.getVoices().length === 0) {
@@ -1066,7 +1069,7 @@
             const cleanText = text.replace(/【[^】]+】/g, '').replace(/\*\*([^*]+)\*\*/g, '$1');
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.voice = getChineseVoice();
+            utterance.voice = getChineseVoice(); 
             utterance.lang = 'zh-CN';
             utterance.rate = 1.0; 
             utterance.pitch = 1.0; 
@@ -1239,12 +1242,16 @@
         function saveNotes() {
             const textarea = document.getElementById('note-textarea');
             if (textarea) {
-                localStorage.setItem(NOTES_STORAGE_KEY, textarea.value);
+                // 为笔记存储添加案件ID前缀，实现案件隔离存储
+                const storageKey = game.currentCaseId ? `${NOTES_STORAGE_KEY}_${game.currentCaseId}` : NOTES_STORAGE_KEY;
+                localStorage.setItem(storageKey, textarea.value);
             }
         }
 
         function loadNotes() {
-            const savedNotes = localStorage.getItem(NOTES_STORAGE_KEY) || '';
+            // 从案件隔离存储中加载笔记
+            const storageKey = game.currentCaseId ? `${NOTES_STORAGE_KEY}_${game.currentCaseId}` : NOTES_STORAGE_KEY;
+            const savedNotes = localStorage.getItem(storageKey) || '';
             const textarea = document.getElementById('note-textarea');
 
             if (textarea) {
@@ -1300,6 +1307,8 @@
             game.currentCaseId = caseId;
             game.currentCaseData = GAME_DATA[caseId];
             game.currentSceneIndex = 0;
+            // 确保每次开始新案件时，加载对应案件的笔记（即使为空）
+            loadNotes();
             loadScene(game.currentCaseData);
         }
         
