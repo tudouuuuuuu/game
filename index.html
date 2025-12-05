@@ -25,6 +25,11 @@
             --border-radius: 6px;
         }
         
+        * {
+            /* 关键：确保所有元素盒模型一致，防止溢出 */
+            box-sizing: border-box; 
+        }
+        
         body {
             /* 修正：确保 body 不被内容撑开而产生水平滚动条 */
             overflow-x: hidden; 
@@ -52,7 +57,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            /* 修正：减小顶部栏在小屏幕上的垂直内边距 */
             padding: 10px 15px; 
             background-color: var(--color-bg-light);
             border-bottom: 1px solid var(--color-border);
@@ -94,38 +98,32 @@
            Persistent UI - 常驻区 (人物卡片 & 推理笔记)
            =================================================================== */
         #persistent-ui-wrapper {
-            /* 修正：减小常驻区的内边距 */
             padding: 10px 15px 0 15px; 
             display: flex; 
-            gap: 15px; /* 减小间距 */
+            gap: 15px; 
             flex-wrap: wrap; 
             background-color: var(--color-bg-medium);
             border-bottom: 1px solid var(--color-border);
             
-            /* 关键修正：强制定位并置于顶层 */
             position: sticky;
-            top: 48px; /* 调整 top 值以适应修正后的 top-bar 高度 (~48px) */
+            top: 48px; 
             z-index: 100; 
-            
-            /* 动画效果，让它在切换时更平滑 */
             transition: opacity 0.3s ease, transform 0.3s ease; 
         }
         
-        /* 确保在宽屏上弹性布局 */
         #role-card-wrapper, #notes-wrapper {
             flex: 1 1 45%; 
             min-width: 300px;
             margin-bottom: 15px;
         }
         
-        /* 角色常驻卡片样式 */
         #constant-role-display {
             background-color: var(--color-bg-light);
             padding: 15px;
             border-radius: var(--border-radius);
             border: 1px solid var(--color-accent);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            height: 100%; /* 确保与笔记框高度对齐 */
+            height: 100%; 
             box-sizing: border-box;
         }
 
@@ -144,7 +142,7 @@
         }
 
         .role-task {
-            color: var(--color-info); /* 任务用蓝色高亮 */
+            color: var(--color-info); 
         }
         
         /* 推理笔记样式 */
@@ -171,7 +169,7 @@
         
         #notes-content {
             overflow: hidden;
-            height: 200px; /* 默认高度 */
+            height: 200px; 
             transition: height 0.3s ease;
         }
 
@@ -194,7 +192,7 @@
             box-sizing: border-box;
             height: 200px;
             padding: 10px;
-            border: none; /* 移除边框，用容器边框 */
+            border: none; 
             background-color: var(--color-bg-medium);
             color: var(--color-text-primary);
             resize: vertical;
@@ -205,7 +203,9 @@
         
         /* 场景内容区 */
         #game-content {
+            /* 修正：确保整个内容区没有水平滚动条 */
             padding: 0 20px;
+            overflow: hidden; 
         }
 
         .scene {
@@ -230,6 +230,7 @@
 
         /* 案件选择列表 */
         .case-list {
+            /* 关键修正：确保在 PC 上使用 grid，在手机上由媒体查询覆盖 */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -392,67 +393,57 @@
         }
 
         /* ===================================================================
-           响应式调整 (重点修正区域)
+           响应式调整 (手机屏幕修正)
            =================================================================== */
         @media (max-width: 768px) {
             
             #app-container {
-                /* 手机上不设最大宽度 */
                 max-width: 100%; 
             }
             
-            /* 强制常驻区在小屏幕上垂直堆叠 */
+            /* 修正游戏内容区内边距 */
+            #game-content {
+                padding: 0 10px; 
+            }
+            
+            /* 案件列表修正：强制单列，并移除 Grid 属性确保兼容性 */
+            .case-list {
+                display: flex; /* 改用 Flex 布局 */
+                flex-direction: column; /* 垂直堆叠 */
+                gap: 15px; /* 间距 */
+                padding: 0;
+            }
+            
+            .case-card {
+                 width: 100%; /* 确保卡片占满宽度 */
+            }
+            
+            /* 常驻区修正 */
             #persistent-ui-wrapper {
                 flex-direction: column;
                 gap: 10px;
-                padding: 10px 10px 0 10px; /* 进一步减小内边距 */
-                top: 45px; /* 适应更小的 top-bar */
-                box-sizing: border-box; /* 确保 padding 不溢出 */
+                padding: 10px 10px 0 10px; 
+                top: 45px; 
             }
             
-            /* 角色卡片和笔记框占满整个宽度 */
             #role-card-wrapper, #notes-wrapper {
                 min-width: 100%;
                 flex-basis: 100%;
                 margin-bottom: 10px;
             }
             
-            /* 场景内容区 */
-            #game-content {
-                padding: 0 10px; /* 最小化内容区横向内边距 */
-            }
-            
             .scene {
-                padding: 15px 0; /* 垂直内边距 */
+                padding: 15px 0; 
                 min-height: 400px;
             }
 
             .top-bar {
-                padding: 8px 10px; /* 最小化顶部栏内边距 */
-            }
-
-            .app-title {
-                font-size: 1.3em;
+                padding: 8px 10px; 
             }
             
-            .menu-btn {
-                padding: 5px 8px;
-                font-size: 0.75em;
-            }
-            
-            /* 案件列表变为单列 */
-            .case-list {
-                grid-template-columns: 1fr;
-            }
-
-            /* 隐藏常驻角色卡片的部分信息以节省空间 */
             #constant-role-display p {
                 font-size: 0.8em;
                 margin: 3px 0;
-            }
-            
-            #constant-role-display h3 {
-                font-size: 1em;
             }
             
             .narrative-box {
@@ -463,10 +454,6 @@
             .action-btn, .confirm-button {
                 padding: 10px 15px;
                 font-size: 1em;
-            }
-            
-            .modal-content {
-                 margin: 5% auto; 
             }
         }
     </style>
@@ -602,12 +589,12 @@
         ];
 
         const SCENE_IMAGES = {
-            '01': '1.jpg', '02': '1.jpg', '03': '1.jpg', '04': '1.jpg', 
-            '05': '1.jpg', '06': '1.jpg', '07': '1.jpg', '08': '1.jpg', 
-            '09': '1.jpg', '10': '1.jpg', '11': '1.jpg', '12': '1.jpg', 
-            '13': '1.jpg', '14': '1.jpg', '15': '1.jpg', 
+            '01': 'camera/1.jpg', '02': 'camera/1.jpg', '03': 'camera/1.jpg', '04': 'camera/1.jpg', 
+            '05': 'camera/1.jpg', '06': 'camera/1.jpg', '07': 'camera/1.jpg', '08': 'camera/1.jpg', 
+            '09': 'camera/1.jpg', '10': 'camera/1.jpg', '11': 'camera/1.jpg', '12': 'camera/1.jpg', 
+            '13': 'camera/1.jpg', '14': 'camera/1.jpg', '15': 'camera/1.jpg', 
         };
-
+        
         /* 完整 GAME_DATA 数据块已保留，为简洁起见此处省略，请确保您的文件中数据完整 */
         const GAME_DATA = { /* ... 保持不变 ... */
             // 案件 01: 未干的雨伞 (复杂/困难)
@@ -1014,9 +1001,6 @@
             truth: '真凶：秘书·秦悦。她利用妻子铺垫的致幻剂基础和学生设计的视觉陷阱，用紫外线触发错觉，同时注射解药制造药物冲突，最终致死。这是一场协作下的完美谋杀。'
         },
         };
-
-
-
         // ===================================================================
         // 2. 核心功能函数 (Functions)
         // ===================================================================
@@ -1026,6 +1010,7 @@
         let chineseVoice = null;
         
         function getChineseVoice() {
+            // 确保 voice 列表已加载
             if (synth.getVoices().length === 0) {
                 synth.onvoiceschanged = getChineseVoice;
                 return;
@@ -1034,24 +1019,42 @@
             if (chineseVoice) return chineseVoice;
             const voices = synth.getVoices();
             
-            // 尝试查找普通话/中文语音
-            chineseVoice = voices.find(voice => 
-                voice.lang === 'zh-CN' || 
-                voice.name.includes('Mandarin') || 
-                voice.name.includes('普通话') 
+            // 1. 尝试查找特定优质中文女声 (zh-CN)
+            let preferredVoice = voices.find(voice => 
+                voice.lang === 'zh-CN' && (
+                    voice.name.includes('Ting-Ting') || // iOS/MacOS 常见优质女声
+                    voice.name.includes('Tingting') || 
+                    voice.name.includes('Mei-Jia') || // Google Chrome 优质女声
+                    voice.name.includes('Natural') || // 微软 Azure 或其他云语音
+                    voice.name.includes('Female')
+                )
             );
 
-            if (!chineseVoice) {
-                chineseVoice = voices.find(voice => 
-                    voice.lang.startsWith('zh-') || voice.lang.startsWith('cmn-')
+            // 2. 如果找不到特定优质声音，则查找所有中文女声 (包含 Female 或不包含 Male)
+            if (!preferredVoice) {
+                preferredVoice = voices.find(voice => 
+                    voice.lang.startsWith('zh-') && !voice.name.includes('Male')
+                );
+            }
+            
+            // 3. 如果找不到女性声音，则退而求其次，选择第一个找到的中文普通话语音
+            if (!preferredVoice) {
+                preferredVoice = voices.find(voice => 
+                    voice.lang === 'zh-CN' || 
+                    voice.name.includes('Mandarin') || 
+                    voice.name.includes('普通话') 
                 );
             }
 
-            if (!chineseVoice) {
-                chineseVoice = voices[0]; // 实在没有就用第一个
+            // 4. 最后回退到第一个语音
+            if (!preferredVoice) {
+                preferredVoice = voices[0]; 
             }
+            
+            chineseVoice = preferredVoice;
             return chineseVoice;
         }
+
 
         function speakNarrative(text) {
             if (!game.ttsOn || !synth) return; 
@@ -1060,7 +1063,6 @@
                 synth.cancel();
             }
 
-            // 清理文本中的【旁白】或【主持人】标签和Markdown粗体
             const cleanText = text.replace(/【[^】]+】/g, '').replace(/\*\*([^*]+)\*\*/g, '$1');
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -1132,8 +1134,7 @@
             const sceneType = scene.type;
 
             const imageEl = document.getElementById('scene-main-image');
-            // 使用 SVG 数据URI作为默认占位符图片，以避免加载外部资源失败
-            const defaultImageUrl = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%25%22%20height%3D%22350%22%20viewBox%3D%220%200%20100%20350%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22350%22%20fill%3D%22%231e1e1e%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23DAA520%22%20font-size%3D%2212%22%20font-family%3D%22Arial%2C%20sans-serif%22%20text-anchor%32%22middle%22%3E%5B%E5%9C%BA%E6%99%AF%E6%8F%92%E5%9B%BE%E5%8D%A0%E4%BD%8D%E7%AC%A6%5D%3C%2Ftext%3E%3C%2Frect%3E%3C%2Fsvg%3E';
+            const defaultImageUrl = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%25%22%20height%3D%22350%22%20viewBox%3D%220%200%20100%20350%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22350%22%20fill%3D%22%231e1e1e%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23DAA520%22%20font-size%3D%2212%22%20font-family%3D%22Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%5B%E5%9C%BA%E6%99%AF%E6%8F%92%E5%9B%BE%E5%8D%A0%E4%BD%8D%E7%AC%A6%5D%3C%2Ftext%3E%3C%2Frect%3E%3C%2Fsvg%3E';
             if (imageEl) {
                 const imageUrl = SCENE_IMAGES[game.currentCaseId] || defaultImageUrl;
                 imageEl.src = imageUrl;
@@ -1238,7 +1239,6 @@
         function saveNotes() {
             const textarea = document.getElementById('note-textarea');
             if (textarea) {
-                // 节流或防抖以优化性能，但这里为简化直接保存
                 localStorage.setItem(NOTES_STORAGE_KEY, textarea.value);
             }
         }
