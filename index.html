@@ -5,459 +5,616 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>侦探档案馆 - 剧本杀 (TTS旁白增强完整版)</title>
     
-<style>
-    /* ===================================================================
-        CSS 样式 (深色主题 + 深金色 accent + UI/UX 优化)
-        增强: 层次结构, 交互反馈, 视觉深度
-        =================================================================== */
-    
-    :root {
-        /* 颜色变量 */
-        --color-bg-dark: #121212;
-        --color-bg-medium: #1e1e1e;
-        --color-bg-light: #2a2a2a;
-        --color-border: #444;
-        --color-text-primary: #e0e0e0;
-        --color-text-secondary: #aaa;
-        --color-accent: #DAA520; /* 深金色 */
-        --color-accent-hover: #FFD700; /* 纯金色 */
-        --color-danger: #e74c3c;
-        --color-info: #79c9f7;
-        --border-radius: 6px;
-    }
-    
-    * {
-        /* 关键：确保所有元素盒模型一致，防止溢出 */
-        box-sizing: border-box; 
-    }
-    
-    body {
-        /* 修正：确保 body 不被内容撑开而产生水平滚动条 */
-        overflow-x: hidden; 
-        background-color: var(--color-bg-dark);
-        color: var(--color-text-primary);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        line-height: 1.6;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    
-    /* ======== 新增/优化：标题和排版层次 ======== */
-    h2 {
-        color: var(--color-accent-hover); /* 使用纯金色突出章节标题 */
-        border-bottom: 2px solid var(--color-border);
-        padding-bottom: 5px;
-        margin-top: 30px;
-        margin-bottom: 15px;
-        font-size: 1.8em;
-    }
-
-    h3 {
-        color: var(--color-accent);
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-size: 1.3em;
-    }
-
-    p {
-        margin-bottom: 15px; /* 统一段落间距 */
-    }
-
-    ul {
-        padding-left: 25px;
-        list-style-type: disc;
-    }
-
-    ul li {
-        margin-bottom: 8px;
-        color: var(--color-text-secondary);
-    }
-    /* ======================================= */
-
-    header {
-        background-color: var(--color-bg-medium);
-        padding: 10px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--color-border);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-
-    header h1 {
-        font-size: 1.5em;
-        color: var(--color-accent);
-        margin: 0;
-    }
-
-    .scene {
-        display: none;
-        padding-top: 20px;
-    }
-
-    .scene.active {
-        display: block;
-    }
-    
-    .case-card {
-        background-color: var(--color-bg-medium);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        padding: 20px;
-        margin-bottom: 15px;
-        cursor: pointer;
-        transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s; /* 增加 box-shadow 动画 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 新增： subtle shadow for depth */
-    }
-
-    .case-card:hover {
-        background-color: var(--color-bg-light);
-        border-color: var(--color-accent);
-        box-shadow: 0 4px 10px rgba(218, 165, 32, 0.2); /* 悬停时金边阴影 */
-    }
-
-    .case-tags {
-        color: var(--color-accent);
-        font-size: 0.9em;
-        margin-bottom: 10px;
-        font-weight: 500;
-    }
-
-    /* ======== 优化：输入框焦点状态和 Textarea 样式 ======== */
-    input[type="text"], #note-textarea {
-        padding: 10px;
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        background-color: var(--color-bg-medium);
-        color: var(--color-text-primary);
-        width: 100%;
-        margin-bottom: 10px;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input[type="text"]:focus, #note-textarea:focus {
-        outline: none;
-        border-color: var(--color-accent);
-        box-shadow: 0 0 8px rgba(218, 165, 32, 0.7); /* 焦点金色辉光 */
-        background-color: var(--color-bg-dark); /* 焦点时背景更暗以突出 */
-    }
-    
-    #note-textarea {
-        min-height: 300px;
-        resize: vertical;
-    }
-    /* ================================================= */
-
-    .action-btn, .confirm-button {
-        background-color: var(--color-accent);
-        color: var(--color-bg-dark);
-        border: none;
-        padding: 10px 15px;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.2s, transform 0.1s; /* 增加 transform 动画 */
-        margin: 5px 0;
-    }
-
-    .action-btn:hover, .confirm-button:hover {
-        background-color: var(--color-accent-hover);
-        transform: translateY(-1px); /* 轻微上浮效果 */
-    }
-
-    .tts-toggle {
-        background-color: var(--color-bg-light);
-        color: var(--color-text-secondary);
-    }
-
-    .tts-on {
-        background-color: var(--color-info);
-        color: var(--color-bg-dark);
-    }
-
-    /* 顶部常驻 UI 区域 */
-    #persistent-ui-wrapper {
-        position: fixed;
-        top: 60px; /* 紧随 header 之后 */
-        right: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        z-index: 99;
-        width: 300px;
-    }
-
-    #constant-role-display {
-        background-color: var(--color-bg-medium);
-        border: 1px solid var(--color-accent);
-        border-radius: var(--border-radius);
-        padding: 15px; /* 增加内边距 */
-        font-size: 0.9em;
-        display: none; /* 初始隐藏 */
-        line-height: 1.4;
-    }
-    
-    /* 推理笔记区域 */
-    #notes-container {
-        background-color: var(--color-bg-medium);
-        border: 1px solid var(--color-border);
-        border-radius: var(--border-radius);
-        max-height: 400px; /* 最大高度 */
-        overflow: hidden;
-        transition: all 0.3s ease-in-out;
-        width: 100%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 笔记区域添加阴影 */
-    }
-    
-    #notes-container.collapsed {
-        max-height: 45px; /* 折叠后的高度 */
-    }
-
-    #notes-header {
-        padding: 10px;
-        background-color: var(--color-bg-light);
-        cursor: pointer;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    #notes-header::after {
-        content: '▲';
-        transition: transform 0.3s;
-    }
-    
-    #notes-container.collapsed #notes-header::after {
-        content: '▼';
-        transform: rotate(180deg);
-    }
-
-    #note-textarea {
-        /* 继承 input 样式 */
-        min-height: 300px;
-        border: none;
-        border-top: 1px solid var(--color-border); /* 分隔线 */
-        padding: 10px;
-        background-color: var(--color-bg-medium);
-        color: var(--color-text-primary);
-        resize: vertical;
-        border-radius: 0 0 var(--border-radius) var(--border-radius); /* 底部圆角 */
-    }
-
-    .clue-item {
-        background-color: var(--color-bg-light);
-        border-left: 5px solid var(--color-accent);
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: var(--border-radius);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* 最终指认区域 */
-    #accusation-input {
-        margin-top: 15px;
-    }
-
-    #menu-modal {
-        display: none; 
-        position: fixed; 
-        z-index: 200; 
-        left: 0;
-        top: 0;
-        width: 100%; 
-        height: 100%; 
-        overflow: auto; 
-        background-color: rgba(0,0,0,0.8); 
-    }
-
-    .menu-content {
-        background-color: var(--color-bg-medium);
-        margin: 15% auto; 
-        padding: 30px;
-        border: 1px solid var(--color-accent);
-        width: 80%; 
-        max-width: 400px;
-        border-radius: var(--border-radius);
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* 模态框阴影 */
-    }
-    
-    .menu-content button {
-        width: 100%;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: var(--color-text-primary);
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* 移动端优化 */
-    @media (max-width: 768px) {
-        .container {
-            padding: 10px;
+    <style>
+        /* ===================================================================
+           CSS 样式 (基于原文件微调：增加边框和高亮，解决单调问题)
+           =================================================================== */
+        
+        :root {
+            /* 颜色变量 - 保持不变 */
+            --color-bg-dark: #121212;
+            --color-bg-medium: #1e1e1e;
+            --color-bg-light: #2a2a2a;
+            --color-border: #444;
+            --color-text-primary: #e0e0e0;
+            --color-text-secondary: #aaa;
+            --color-accent: #DAA520; /* 深金色 */
+            --color-accent-hover: #FFD700; /* 纯金色 */
+            --color-danger: #e74c3c;
+            --color-info: #79c9f7;
+            --border-radius: 6px;
         }
-        #persistent-ui-wrapper {
-            position: static; 
+        
+        * {
+            box-sizing: border-box; 
+        }
+        
+        body {
+            overflow-x: hidden; 
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #app-container {
             width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-bg-medium);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+            padding-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        /* 顶部栏 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px; 
+            background-color: var(--color-bg-light);
+            border-bottom: 2px solid var(--color-accent); /* 修改：底部增加金色边框 */
+            position: sticky;
+            top: 0;
+            z-index: 101; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5); /* 修改：增加阴影 */
+        }
+
+        .app-title {
+            font-size: 1.4em; 
+            font-weight: bold;
+            color: var(--color-accent);
+            text-shadow: 0 0 5px rgba(218, 165, 32, 0.3); /* 修改：增加文字发光 */
+        }
+
+        .menu-btn {
+            background-color: var(--color-bg-dark); /* 修改：加深背景 */
+            color: var(--color-accent); /* 修改：文字金色 */
+            border: 1px solid var(--color-accent); /* 修改：增加金色边框 */
+            padding: 6px 10px; 
+            margin-left: 5px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.8em; 
+            transition: all 0.2s;
+        }
+
+        .menu-btn:hover {
+            background-color: var(--color-accent);
+            color: var(--color-bg-dark);
+        }
+
+        .menu-btn-tts.tts-on {
+            background-color: var(--color-accent);
+            color: var(--color-bg-dark);
+            font-weight: bold;
+            box-shadow: 0 0 8px var(--color-accent); /* 修改：开启状态发光 */
+        }
+        
+        /* 常驻 UI */
+        #persistent-ui-wrapper {
+            padding: 10px 15px 0 15px; 
+            display: flex; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            background-color: var(--color-bg-medium);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 48px; 
+            z-index: 100; 
+            transition: opacity 0.3s ease, transform 0.3s ease; 
+        }
+        
+        #role-card-wrapper, #notes-wrapper {
+            flex: 1 1 45%; 
+            min-width: 300px;
+            margin-bottom: 15px;
+        }
+        
+        #constant-role-display {
+            background-color: var(--color-bg-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-accent); /* 修改：保留金色边框 */
+            box-shadow: 0 0 10px rgba(218, 165, 32, 0.1); /* 修改：增加微弱金光 */
+            height: 100%; 
+            box-sizing: border-box;
+        }
+
+        #constant-role-display h3 {
+            color: var(--color-accent);
+            border-bottom: 1px dashed var(--color-border);
+            padding-bottom: 5px;
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+        
+        #constant-role-display p {
+            margin: 8px 0;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .role-task {
+            color: var(--color-info); 
+        }
+        
+        /* 笔记样式 */
+        #notes-container {
+            background-color: var(--color-bg-light);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-info); /* 修改：使用蓝色边框区分笔记 */
+            transition: height 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #notes-header {
+            padding: 10px 15px;
+            background-color: rgba(121, 201, 247, 0.1); /* 修改：微蓝背景 */
+            color: var(--color-info);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: 1px solid var(--color-info);
+            font-weight: bold;
+        }
+        
+        #notes-content {
+            overflow: hidden;
+            height: 200px; 
+            transition: height 0.3s ease;
+        }
+
+        #notes-container.collapsed #notes-content {
+            height: 0;
+            padding: 0;
+            border: none;
+        }
+        
+        #toggle-notes-btn {
+            transition: transform 0.3s ease;
+        }
+
+        #notes-container.collapsed #toggle-notes-btn {
+            transform: rotate(-90deg);
+        }
+
+        #note-textarea {
+            width: 100%;
+            box-sizing: border-box;
+            height: 200px;
+            padding: 10px;
+            border: none; 
+            background-color: var(--color-bg-medium);
+            color: var(--color-text-primary);
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1em;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        /* 场景内容区 */
+        #game-content {
+            padding: 0 20px;
+            overflow: hidden; 
+        }
+
+        .scene {
+            padding: 20px 0; 
+            display: none;
+            min-height: 500px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .scene.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .scene-title {
+            color: var(--color-accent-hover);
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* 案件选择列表 */
+        .case-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .case-card {
+            background-color: var(--color-bg-light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-accent); /* 修改：全包围金色边框 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 修改：增加阴影 */
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background-color: var(--color-accent); /* 左侧加粗金条 */
+        }
+
+        .case-card:hover {
+            transform: translateY(-3px);
+            background-color: #333;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.3); /* 修改：悬停发光 */
+        }
+        
+        .case-tags {
+            color: var(--color-accent); /* 修改：标签颜色更亮 */
+            font-size: 0.9em;
+            margin: 5px 0 10px 0;
+            font-weight: bold;
+        }
+        
+        /* 按钮样式 */
+        .action-btn, .confirm-button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            margin-top: 20px;
+            background-color: var(--color-accent);
+            color: var(--color-bg-dark);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* 修改：增加立体感 */
+        }
+
+        .action-btn:hover, .confirm-button:hover {
+            background-color: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(218, 165, 32, 0.2);
+        }
+
+        /* 角色输入区 */
+        .role-input-box {
+            background-color: var(--color-bg-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--color-border); /* 修改：增加边框 */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* 修改：增加阴影 */
+        }
+
+        #role-name-input {
+            width: 80%; 
+            padding: 12px;
+            border: 1px solid var(--color-accent); /* 修改：输入框金色边框 */
+            border-radius: 4px;
+            background-color: var(--color-bg-medium);
+            color: var(--color-text-primary);
+            font-size: 1em;
             margin-top: 10px;
         }
-        #notes-container {
-            max-height: 300px;
+        
+        .role-script-area {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid var(--color-accent); /* 修改：剧本框加粗金色 */
+            border-radius: var(--border-radius);
+            background-color: #1a1a1a;
+            position: relative;
         }
-        #notes-container.collapsed {
-            max-height: 45px;
+        
+        .role-script-area p span {
+            color: var(--color-info);
+            font-style: italic;
         }
-        #constant-role-display {
-            width: 100%;
+        
+        /* 叙事场景 */
+        .scene-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border); /* 修改：图片加框 */
+            padding: 5px;
+            border-radius: var(--border-radius);
+            background-color: var(--color-bg-light);
+        }
+
+        .scene-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 350px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .narrative-box {
+            background-color: var(--color-bg-light);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            line-height: 1.8;
+            font-size: 1.1em;
+            border-left: 5px solid var(--color-info);
+            border-right: 1px solid var(--color-border); /* 修改：增加右下边框使其更像卡片 */
+            border-bottom: 1px solid var(--color-border);
+            border-top: 1px solid var(--color-border);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* 线索列表 */
+        .clue-item {
+            background-color: var(--color-bg-light);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--color-danger);
+            border-top: 1px solid var(--color-border); /* 修改：增加边框 */
+            border-right: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 修改：增加阴影 */
+            transition: transform 0.2s;
+        }
+        
+        .clue-item:hover {
+            transform: translateX(5px); /* 修改：悬停动效 */
+        }
+
+        .clue-item h3 {
+            color: var(--color-danger);
+            margin-top: 0;
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(231, 76, 60, 0.3); /* 修改：标题下划线 */
+            padding-bottom: 5px;
             margin-bottom: 10px;
         }
-    }
-</style>
+        
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 102; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: var(--color-bg-medium);
+            margin: 15% auto; 
+            padding: 25px;
+            border: 2px solid var(--color-accent); /* 修改：金色边框 */
+            width: 80%;
+            max-width: 400px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.2);
+        }
+
+        .close-btn {
+            color: var(--color-text-secondary);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: var(--color-accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* 指认列表中的按钮样式 */
+        #role-list-for-accusation .menu-btn {
+            background-color: var(--color-danger);
+            color: white;
+            border: 1px solid var(--color-danger);
+            font-size: 1em;
+            margin-top: 0;
+        }
+
+        #role-list-for-accusation .menu-btn:hover {
+            background-color: #c0392b;
+            color: white;
+        }
+        
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            #app-container { max-width: 100%; }
+            #game-content { padding: 0 10px; }
+            .case-list {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 15px;
+                padding: 0;
+            }
+            .case-card { width: 100%; }
+            #persistent-ui-wrapper {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 10px 0 10px; 
+                top: 45px; 
+            }
+            #role-card-wrapper, #notes-wrapper {
+                min-width: 100%;
+                flex-basis: 100%;
+                margin-bottom: 10px;
+            }
+            .scene { padding: 15px 0; min-height: 400px; }
+            .top-bar { padding: 8px 10px; }
+            #constant-role-display p { font-size: 0.8em; margin: 3px 0; }
+            .narrative-box { padding: 15px; font-size: 1em; }
+            .action-btn, .confirm-button { padding: 10px 15px; font-size: 1em; }
+        }
+    </style>
 </head>
 <body>
-
-    <div id="persistent-ui-wrapper" style="display: none;">
-        <div id="constant-role-display">
-            <p id="constant-role-name"></p>
-            <p id="constant-role-secret"></p>
-            <p id="constant-role-task"></p>
-        </div>
+    <div id="app-container">
         
-        <div id="notes-container" class="collapsed">
-            <div id="notes-header">
-                推理笔记
+        <header class="top-bar">
+            <span class="app-title">🕵️ 侦探档案馆</span>
+            <div class="menu-controls">
+                <button id="tts-toggle" class="menu-btn menu-btn-tts">🔊 TTS: 关</button> 
+                <button id="menu-btn" class="menu-btn">📋 菜单</button>
             </div>
-            <textarea id="note-textarea" placeholder="在此记录线索、时间线和推理思路...（自动保存）"></textarea>
+        </header>
+
+        <div id="persistent-ui-wrapper" style="display: none;">
+            
+            <div id="role-card-wrapper">
+                <div id="constant-role-display" style="display: none;">
+                    <h3>🎭 你的剧本卡</h3>
+                    <p id="constant-role-name"><strong>角色:</strong> 待加载</p>
+                    <p id="constant-role-secret"><strong>秘密:</strong> 待加载</p>
+                    <p id="constant-role-task" class="role-task"><strong>任务:</strong> 待加载</p>
+                </div>
+            </div>
+            
+            <div id="notes-wrapper">
+                <div id="notes-container" class="collapsed">
+                    <div id="notes-header">
+                        <span>📝 我的推理笔记 (自动保存)</span>
+                        <span id="toggle-notes-btn">▼</span>
+                    </div>
+                    <div id="notes-content">
+                        <textarea id="note-textarea" placeholder="在这里写下你的线索、时间线和推理思路..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
         </div>
+        <main id="game-content">
+            <div id="scene-case-select" class="scene active">
+                <h1 class="scene-title">选择今日案件 (共 20 个完整剧本)</h1> 
+                <div class="case-list" id="case-list-container">
+                    </div>
+            </div>
+
+            <div id="scene-role-select" class="scene">
+                <div class="role-input-box">
+                    <h2>你的角色剧本</h2>
+                    <p>请**输入你被分配到的角色名**，查看你的秘密。</p>
+                    <p id="role-name-options">可输入角色名: 待加载...</p>
+                    
+                    <input type="text" id="role-name-input" placeholder="输入角色名">
+                    <button id="confirm-role-btn" class="confirm-button">确认</button>
+                    
+                    <div id="role-script-display" class="role-script-area">
+                        </div>
+                </div>
+            </div>
+
+            <div id="scene-narrative" class="scene">
+                <div class="scene-image-container">
+                    <img id="scene-main-image" class="scene-image" src="" alt="场景插图占位符">
+                </div>
+                
+                <div class="narrative-box">
+                    <p id="narrative-text" class="narrative-text">【旁白】故事将在这里展开...</p>
+                </div>
+                
+                <button id="continue-story-btn" class="action-btn">继续故事 ▶</button>
+            </div>
+
+            <div id="scene-clues" class="scene">
+                <h2 class="clue-title">🔍 搜证阶段: 线索列表</h2>
+                <p id="clue-stage-info" style="text-align: center; color: var(--color-text-secondary); margin-bottom: 20px;">本次搜证有 0 条线索。</p>
+                
+                <div id="clue-list-container">
+                    </div>
+                
+                <button id="finish-clues-btn" class="action-btn">结束搜证，进入下一轮讨论</button>
+            </div>
+            
+            <div id="scene-select-accusation" class="scene">
+                <h2 class="scene-title">🔪 最终指认阶段</h2>
+                <p style="text-align: center;">【主持人】请大家给出最终指认！请在下方列表选择你的嫌疑人进行指认。</p>
+                
+                <div id="accusation-list-container" style="margin: 20px 0; padding: 15px; border: 1px dashed var(--color-danger); border-radius: var(--border-radius);">
+                    <h3>嫌疑人列表 (指认目标)</h3>
+                    <div id="role-list-for-accusation" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        </div>
+                </div>
+                
+                <button id="confirm-accusation-btn" class="action-btn">确认指认，揭晓真相 ▶</button>
+            </div>
+            <div id="scene-reveal" class="scene">
+                <h2 class="scene-title">身份揭晓 · 传闻模式</h2>
+                <p>【主持人】现在，我们来揭开案件的真相。</p>
+                
+                <div class="reveal-content">
+                    <p id="final-reveal-text" style="background-color: var(--color-bg-light); padding: 20px; border-radius: var(--border-radius); line-height: 1.8;">
+                        **案件真相：**
+                        <br>
+                        <span id="truth-display" style="color: var(--color-accent);">（真相在此处揭晓）</span>
+                    </p>
+                </div>
+                <button class="action-btn" onclick="goToScene('scene-case-select')">返回案件选择</button>
+            </div>
+
+        </main>
     </div>
     
-    <header>
-        <h1>侦探档案馆</h1>
-        <div>
-            <button id="tts-toggle" class="action-btn tts-toggle">🔊 TTS: 关</button>
-            <button id="menu-btn" class="action-btn">☰ 菜单</button>
-        </div>
-    </header>
-
-    <div class="container">
-        <div id="scene-case-select" class="scene active">
-            <h2>案件列表</h2>
-            <p>请选择一个剧本案件开始游戏。</p>
-            <div id="case-list-container">
-                </div>
-        </div>
-
-        <div id="scene-role-select" class="scene">
-            <h2>角色确认</h2>
-            <p>请输入您的角色名称，以查阅您的剧本和任务。</p>
-            <div id="role-input-area">
-                <input type="text" id="role-name-input" placeholder="输入您的角色全名">
-                <p id="role-name-options" style="font-size: 0.8em; color: var(--color-text-secondary);"></p>
-                <button id="confirm-role-btn" class="action-btn" style="width: 100%;">确认角色</button>
-            </div>
-            <div id="role-script-display" style="margin-top: 20px;">
-                </div>
-        </div>
-
-        <div id="scene-narrative" class="scene">
-            <img id="scene-main-image" style="width: 100%; height: 350px; object-fit: cover; margin-bottom: 20px;" alt="场景插图占位符">
-            <h2>故事进展</h2>
-            <p id="narrative-text" style="white-space: pre-wrap;"></p>
-            <button id="continue-story-btn" class="action-btn" style="width: 100%;">继续故事 ▶</button>
-        </div>
-        
-        <div id="scene-clues" class="scene">
-            <h2>搜证阶段</h2>
-            <p id="clue-stage-info"></p>
-            <h3>您的线索：</h3>
-            <div id="clue-list-container">
-                </div>
-            <button id="finish-clues-btn" class="action-btn" style="width: 100%; margin-top: 20px;">结束搜证，进入讨论/下一环节</button>
-        </div>
-        
-        <div id="scene-accusation" class="scene">
-            <h2>最终指认</h2>
-            <p>请各位玩家在公聊中给出最终指认和推理。本应用不具备投票功能，请口头确定凶手后，点击按钮进入真相揭晓。</p>
-            <div id="accusation-input">
-                <input type="text" id="accused-role-input" placeholder="输入你指认的凶手 (选填，仅作记录参考)">
-            </div>
-            <button id="proceed-to-reveal-btn" class="action-btn" style="width: 100%; margin-top: 20px;">确认指认，揭晓真相</button>
-        </div>
-
-
-        <div id="scene-reveal" class="scene">
-            <h2>案件真相</h2>
-            <div style="background-color: var(--color-danger); padding: 20px; border-radius: var(--border-radius);">
-                <h3 style="color: white;">【真相】</h3>
-                <p id="truth-display" style="white-space: pre-wrap;"></p>
-            </div>
-            <button onclick="goToScene('scene-case-select')" class="action-btn" style="width: 100%; margin-top: 20px;">返回案件列表</button>
-        </div>
-
-    </div>
-
     <div id="menu-modal" class="modal">
-        <div class="menu-content">
-            <span class="close" id="close-menu">&times;</span>
-            <h2>游戏菜单</h2>
-            
-            <button id="menu-back-to-case" class="action-btn menu-item">返回案件列表 (重置游戏)</button>
-            <button class="action-btn menu-item" onclick="document.getElementById('notes-container').classList.toggle('collapsed');">切换笔记折叠</button>
-            <button class="action-btn menu-item" onclick="alert('该功能暂未开放。');">游戏帮助</button>
+        <div class="modal-content">
+            <span class="close-btn" id="close-menu">&times;</span>
+            <h2>📋 游戏菜单</h2>
+            <p>这里可以放置游戏的设置和退出选项。</p>
+            <button class="confirm-button" onclick="goToScene('scene-case-select'); document.getElementById('menu-modal').style.display='none';">返回案件选择</button>
         </div>
     </div>
-
 
     <script>
         // ===================================================================
-        // 1. 全局状态与变量定义 (P1 修复: 声明 chineseVoice)
+        // 1. 核心数据 (Data)
         // ===================================================================
-        const synth = window.speechSynthesis;
-        let chineseVoice = null; 
-        let selectedRoleLocked = false; 
-        
+
         let game = {
+            currentCaseId: null,
+            currentCaseData: null,
+            currentSceneIndex: 0,
             ttsOn: false, 
-            currentCaseId: null, 
-            currentCaseData: null, 
-            currentSceneIndex: 0, 
-            roleName: null, 
-            currentClueStage: 1 
-        };
-        
-        const SCENE_IMAGES = {
-            '01': '1.jpg', '02': '1.jpg', '03': '1.jpg', '04': '1.jpg','05': '1.jpg', 
-            '06': '1.jpg', '07': '1.jpg', '08': '1.jpg','08': '1.jpg','09': '1.jpg', 
-            '10': '1.jpg', '11': '1.jpg', '12': '1.jpg','12': '1.jpg','13': '1.jpg',
-            '14': '1.jpg', '15': '1.jpg', '16': '1.jpg','17': '1.jpg', '18': '1.jpg', 
-            '19': '1.jpg', '20': '1.jpg',
+            roleName: null, // 存储当前玩家的角色名
+            currentClueStage: 1
+            
         };
 
-        // ===================================================================
-        // 2. 剧本数据 (GAME_DATA) - 20个完整优化剧本内容
-        //    结构：title, tags, description, roles (含 identity, secret, task, memoir), scenes (含 select_accusation), clue_stages (含 access), truth
-        // ===================================================================
+        // 注意：原文件有 BASIC_SCENES_TEMPLATE 变量，但新结构中每个剧本自带 scenes，
+        // 为了兼容旧逻辑（如果还有用到），保留定义但内容可为空或默认。
+        const BASIC_SCENES_TEMPLATE = [
+            { type: 'narrative', text: '【旁白】故事开始...' },
+            { type: 'select_role' },
+            { type: 'clues_stage', stage: 1 },
+            { type: 'clues_stage', stage: 2 },
+            { type: 'reveal' }
+        ];
+
+        const SCENE_IMAGES = {
+            '01': '1.jpg', '02': '1.jpg', '03': '1.jpg', '04': '1.jpg','05': '1.jpg', 
+            '06': '1.jpg', '07': '1.jpg', '08': '1.jpg','09': '1.jpg', '10': '1.jpg', 
+            '11': '1.jpg', '12': '1.jpg', '13': '1.jpg', '14': '1.jpg', '15': '1.jpg',
+            '16': '1.jpg', '17': '1.jpg', '18': '1.jpg', '19': '1.jpg', '20': '1.jpg'
+        };
         
         const GAME_DATA = {
             "01": {
@@ -1163,44 +1320,45 @@
             }
         };
 
+
         // ===================================================================
-        // 3. TTS 语音增强 (Optimized TTS)
+        // 2. 核心功能函数 (Functions) - 保持原文件逻辑不动，仅做适配
         // ===================================================================
         
-        /**
-         * 改进的中文语音选择函数，优先选择柔和女声
-         */
+        // TTS 功能 (Web Speech API)
+        const synth = window.speechSynthesis;
+        let chineseVoice = null;
+        let selectedRoleLocked = false;
+        
         function getChineseVoice() {
+            // 确保 voice 列表已加载
             if (synth.getVoices().length === 0) {
                 synth.onvoiceschanged = getChineseVoice;
                 return;
             }
 
             if (chineseVoice) return chineseVoice;
-
             const voices = synth.getVoices();
             
             // 1. 尝试查找特定优质中文女声 (zh-CN)
             let preferredVoice = voices.find(voice => 
                 voice.lang.startsWith('zh-') && (
-                    voice.name.includes('Ting-Ting') ||    
+                    voice.name.includes('Ting-Ting') || 
                     voice.name.includes('Tingting') || 
-                    voice.name.includes('Mei-Jia') ||      
-                    voice.name.includes('Natural') ||      
-                    voice.name.includes('Female') ||       
-                    voice.name.includes('Xiaoxiao') ||     
-                    voice.name.includes('Xiao')            
+                    voice.name.includes('Mei-Jia') || 
+                    voice.name.includes('Natural') || 
+                    voice.name.includes('Female')
                 )
             );
 
-            // 2. 查找所有中文女声 
+            // 2. 如果找不到特定优质声音，则查找所有中文女声
             if (!preferredVoice) {
                 preferredVoice = voices.find(voice => 
                     voice.lang.startsWith('zh-') && !voice.name.includes('Male')
                 );
             }
             
-            // 3. 查找中文普通话语音
+            // 3. 如果找不到女性声音，则退而求其次
             if (!preferredVoice) {
                 preferredVoice = voices.find(voice => 
                     voice.lang === 'zh-CN' || 
@@ -1217,8 +1375,7 @@
             chineseVoice = preferredVoice;
             return chineseVoice;
         }
-        
-        // 辅助函数：朗读旁白
+
         function speakNarrative(text) {
             if (!game.ttsOn || !synth) return; 
 
@@ -1226,8 +1383,8 @@
                 synth.cancel();
             }
 
-            // 移除 markdown 粗体和旁白标签
-            const cleanText = text.replace(/【[^】]+】/g, '').replace(/\*\*([^*]+)\*\*/g, '$1'); 
+            // 清理文本中的【旁白/主持人】和 markdown ** 加粗标记
+            const cleanText = text.replace(/【[^】]+】/g, '').replace(/\*\*([^*]+)\*\*/g, '$1');
 
             const utterance = new SpeechSynthesisUtterance(cleanText);
             utterance.voice = getChineseVoice(); 
@@ -1238,23 +1395,17 @@
             synth.speak(utterance);
         }
         
-        // 辅助函数：停止朗读
         function stopSpeaking() {
-            if (synth && synth.speaking) {
+            if (synth.speaking) {
                 synth.cancel();
             }
         }
         
-        if (synth) {
-            getChineseVoice();
-        }
+        getChineseVoice();
 
-        // ===================================================================
-        // 4. 场景和状态控制
-        // ===================================================================
 
         /**
-         * 场景切换逻辑
+         * 场景切换逻辑 (Scene Switching)
          */
         function goToScene(sceneId) {
             document.querySelectorAll('.scene').forEach(scene => {
@@ -1272,21 +1423,21 @@
             
             const gameInProgress = (sceneId !== 'scene-case-select' && sceneId !== 'scene-role-select');
             
-            if (game.roleName && gameInProgress) { 
-                persistentWrapper.style.display = 'flex'; 
-                constantRoleDisplay.style.display = 'block'; 
+            if (game.roleName && gameInProgress) {
+                 persistentWrapper.style.display = 'flex'; 
+                 constantRoleDisplay.style.display = 'block'; 
             } else {
-                persistentWrapper.style.display = 'none'; 
+                 persistentWrapper.style.display = 'none'; 
             }
             
-            if (sceneId === 'scene-narrative' || sceneId === 'scene-clues' || sceneId === 'scene-reveal') {
+            if (sceneId === 'scene-narrative' || sceneId === 'scene-clues' || sceneId === 'scene-reveal' || sceneId === 'scene-select-accusation') {
                 loadNotes();
             }
         }
 
 
         /**
-         * 加载并显示当前剧本中的场景内容 (新增对 select_accusation 的处理)
+         * 加载并显示当前剧本中的场景内容
          */
         function loadScene(currentCaseData) {
             const scenes = currentCaseData.scenes;
@@ -1299,6 +1450,7 @@
             const sceneType = scene.type;
 
             const imageEl = document.getElementById('scene-main-image');
+            // 使用占位符，因为实际图片可能需要从外部加载
             const defaultImageUrl = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%25%22%20height%3D%22350%22%20viewBox%3D%220%200%20100%20350%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22350%22%20fill%3D%22%231e1e1e%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23DAA520%22%20font-size%3D%2212%22%20font-family%3D%22Arial%2C%20sans-serif%22%20text-anchor%3D%22middle%22%3E%5B%E5%9C%BA%E6%99%AF%E6%8F%92%E5%9B%BE%E5%8D%A0%E4%BD%8D%E7%AC%A6%5D%3C%2Ftext%3E%3C%2Frect%3E%3C%2Fsvg%3E';
             if (imageEl) {
                 const imageUrl = SCENE_IMAGES[game.currentCaseId] || defaultImageUrl;
@@ -1311,7 +1463,6 @@
                 case 'narrative':
                     goToScene('scene-narrative');
                     document.getElementById('narrative-text').innerHTML = scene.text.replace(/\n/g, '<br>');
-                    
                     speakNarrative(scene.text); 
                     
                     document.getElementById('continue-story-btn').textContent = "继续故事 ▶";
@@ -1327,7 +1478,7 @@
                     document.getElementById('role-name-options').textContent = `可输入角色名: ${roleNames}`;
                     document.getElementById('role-name-input').value = '';
                     document.getElementById('role-script-display').innerHTML = '';
-                    document.getElementById('confirm-role-btn').textContent = "确认角色";
+                    document.getElementById('confirm-role-btn').textContent = "确认";
                     
                     speakNarrative("请各位玩家确认自己的角色剧本，输入你的角色全名。");
                     break;
@@ -1337,15 +1488,16 @@
                     game.currentClueStage = scene.stage;
                     loadClues(currentCaseData.clue_stages[game.currentClueStage]);
                     
-                    speakNarrative(`第${game.currentClueStage}轮搜证开始。请各位查看自己的专属线索和公共线索。`);
+                    speakNarrative(`第${game.currentClueStage}轮搜证开始。本次搜证有${currentCaseData.clue_stages[game.currentClueStage].length}条线索。`);
                     break;
                     
-                case 'select_accusation': // ⭐ 修复：新增指认场景逻辑
-                    goToScene('scene-accusation');
-                    speakNarrative("最终指认环节。请大家在公聊中给出最终指认。");
+                // 新增场景处理逻辑：最终指认列表
+                case 'select_accusation':
+                    goToScene('scene-select-accusation');
+                    renderAccusationRoles(currentCaseData.roles);
+                    speakNarrative("现在是最终指认环节，请大家给出最终指认。");
                     
-                    document.getElementById('proceed-to-reveal-btn').onclick = () => {
-                        // 可以记录指认结果，此处直接进入下一场景
+                    document.getElementById('confirm-accusation-btn').onclick = () => {
                         game.currentSceneIndex++;
                         loadScene(currentCaseData);
                     };
@@ -1354,44 +1506,71 @@
                 case 'reveal':
                     goToScene('scene-reveal');
                     document.getElementById('truth-display').textContent = currentCaseData.truth;
-                    
-                    speakNarrative("真相揭晓！");
+                    // 移除指认列表渲染
+                    speakNarrative("真相揭晓环节。");
                     break;
-                    
+
                 default:
-                    // 跳过未识别的场景类型
                     game.currentSceneIndex++;
                     loadScene(currentCaseData);
             }
         }
 
         /**
-         * 加载线索列表 (核心修复: 过滤线索)
+         * FIX 2 辅助函数: 渲染最终指认的角色列表
+         */
+        function renderAccusationRoles(roles) {
+            const container = document.getElementById('role-list-for-accusation');
+            if (!container) return;
+            container.innerHTML = '';
+
+            Object.keys(roles).forEach(roleName => {
+                const btn = document.createElement('button');
+                btn.className = 'menu-btn'; 
+                // 设置样式，使其更突出，作为指认目标
+                btn.style.backgroundColor = 'var(--color-danger)';
+                btn.style.color = 'white';
+                btn.style.border = '1px solid var(--color-danger)';
+                btn.style.marginTop = '0';
+                btn.style.flexShrink = '0'; // 防止按钮被压缩
+                
+                btn.textContent = roleName;
+                btn.title = `指认 ${roleName}`;
+                container.appendChild(btn);
+            });
+        }
+
+        /**
+         * 加载线索列表 (包含 FIX 1 专属线索权限检查)
          */
         function loadClues(clues) {
             const container = document.getElementById('clue-list-container');
             container.innerHTML = '';
             
-            // ⭐ 修复：根据 access 字段过滤线索
-            const roleClues = clues.filter(clue => 
-                clue.access === 'public' || clue.access === game.roleName
-            );
-            
-            document.getElementById('clue-stage-info').textContent = `本次您可查看 ${roleClues.length} 条线索 (第 ${game.currentClueStage} 轮搜证)。`;
+            const totalClues = clues.length;
+            const shownClues = clues.filter(c => !c.access || c.access === 'public' || c.access === game.roleName).length;
 
-            if (roleClues.length === 0) {
-                 container.innerHTML = `<p style="color: var(--color-text-secondary);">本轮您没有专属线索。</p>`;
-                 return;
-            }
+            document.getElementById('clue-stage-info').textContent = `本次搜证有 ${totalClues} 条线索 (第 ${game.currentClueStage} 轮搜证)。`;
 
-            roleClues.forEach((clue, index) => {
-                const isPrivate = clue.access !== 'public';
-                const accessTag = isPrivate ? `【${clue.access} 专属】` : `【公共线索】`;
-                
+            clues.forEach((clue, index) => {
                 const clueDiv = document.createElement('div');
                 clueDiv.classList.add('clue-item');
-                clueDiv.style.borderLeftColor = isPrivate ? 'var(--color-danger)' : 'var(--color-accent)';
-                clueDiv.innerHTML = `<h3>${accessTag} ${clue.title}</h3><p>${clue.detail}</p>`;
+                
+                const isPrivate = clue.access && clue.access !== 'public';
+                const isMyClue = isPrivate && clue.access === game.roleName;
+
+                if (isPrivate && !isMyClue) {
+                    // FIX 1: 隐藏不属于当前玩家的专属线索内容
+                    clueDiv.innerHTML = `
+                        <h3><span style="color:red">[${clue.access} 专属]</span> 🔒 **此线索为 ${clue.access} 专属，你无权查看。**</h3>
+                        <p style="color:var(--color-text-secondary); font-style:italic;">（请向 ${clue.access} 玩家询问）</p>
+                    `;
+                } else {
+                    // 显示公共线索 或 玩家自己的专属线索
+                    const accessTag = isPrivate ? `<span style="color:red">[${clue.access} 专属]</span>` : `[公共]`;
+                    clueDiv.innerHTML = `<h3>${accessTag} ${clue.title}</h3><p>${clue.detail}</p>`;
+                }
+                
                 container.appendChild(clueDiv);
             });
 
@@ -1403,7 +1582,7 @@
 
 
         /**
-         * 重置游戏状态 (P4 修复: 重置锁定状态)
+         * 重置游戏状态
          */
         function resetGame() {
             game.currentCaseId = null;
@@ -1411,24 +1590,22 @@
             game.currentSceneIndex = 0;
             game.roleName = null;
             game.currentClueStage = 1;
-            document.getElementById('role-script-display').innerHTML = '';
-            document.getElementById('role-name-input').value = '';
-            stopSpeaking(); 
-            
             selectedRoleLocked = false;
+            document.getElementById('role-script-display').innerHTML = '';
+            stopSpeaking(); 
             
             document.getElementById('persistent-ui-wrapper').style.display = 'none'; 
         }
 
         // ===================================================================
-        // 5. 推理笔记功能 (Notes Functionality)
+        // 3. 推理笔记功能 (Notes Functionality)
         // ===================================================================
         const NOTES_STORAGE_KEY = 'detective_notes';
         
         function saveNotes() {
             const textarea = document.getElementById('note-textarea');
-            if (textarea && game.currentCaseId) {
-                const storageKey = `${NOTES_STORAGE_KEY}_${game.currentCaseId}`;
+            if (textarea) {
+                const storageKey = game.currentCaseId ? `${NOTES_STORAGE_KEY}_${game.currentCaseId}` : NOTES_STORAGE_KEY;
                 localStorage.setItem(storageKey, textarea.value);
             }
         }
@@ -1451,20 +1628,17 @@
 
 
         // ===================================================================
-        // 6. 事件监听器和初始化 (P2, 角色锁定, P3 修复)
+        // 4. 事件监听器和初始化
         // ===================================================================
 
-        /**
-         * 初始化案件列表 (P2 修复: 使用 Object.keys 遍历)
-         */
+        // 初始化案件列表
         function renderCaseList() {
             const container = document.getElementById('case-list-container');
             container.innerHTML = '';
             
-            // 使用 Object.keys 遍历 GAME_DATA 的所有键，更健壮
             Object.keys(GAME_DATA).sort().forEach(caseId => {
                 const data = GAME_DATA[caseId];
-                if (!data) return; 
+                if (!data) return;
 
                 const card = document.createElement('div');
                 card.classList.add('case-card');
@@ -1477,6 +1651,7 @@
                     <button class="confirm-button" style="width:100%;">开始案件</button>
                 `;
 
+                // 使用闭包确保 caseId 正确传递
                 card.onclick = (function(id) {
                     return function() {
                         startGame(id);
@@ -1487,26 +1662,24 @@
             });
         }
         
-        /**
-         * 启动游戏 (新增角色锁定检查)
-         */
+        // 启动游戏
         function startGame(caseId) {
+            game.currentCaseId = caseId;
             if (selectedRoleLocked) {
-                alert(`角色已锁定 (${game.roleName})，无法切换案件！请通过菜单重置游戏。`);
+                alert(`角色已锁定 (${game.roleName})，无法切换案件！`);
                 return;
             }
-
-            game.currentCaseId = caseId;
             game.currentCaseData = GAME_DATA[caseId];
             game.currentSceneIndex = 0;
             loadNotes();
             loadScene(game.currentCaseData);
         }
         
-        // 常驻角色卡片设置 (新增 memoir 显示)
+        // 常驻角色卡片设置
         function setConstantRoleDisplay(roleData, roleName) {
             const roleNameHtml = `<strong>角色:</strong> ${roleName} (${roleData.identity})`;
-            const secretHtml = `<strong>秘密:</strong> ${roleData.secret}`;
+            // 确保常驻卡片只显示角色名、秘密和任务，不显示专属回忆 (memoir)
+            const secretHtml = `<strong>秘密:</strong> ${roleData.secret}`; 
             const taskHtml = `<strong>任务:</strong> ${roleData.task}`;
             
             document.getElementById('constant-role-name').innerHTML = roleNameHtml;
@@ -1515,47 +1688,49 @@
         }
 
 
-        /**
-         * 角色确认按钮逻辑 (新增空输入检查和角色锁定)
-         */
+        // 角色确认按钮逻辑
         document.getElementById('confirm-role-btn').onclick = () => {
             const inputName = document.getElementById('role-name-input').value.trim();
-            
             if (!inputName) {
                 alert('请输入您的角色名！');
-                return; 
+                return;
             }
-            
             const roles = game.currentCaseData.roles;
             const normalizedInput = inputName.toLowerCase();
             
+            // 模糊匹配角色名
             const matchingRoleName = Object.keys(roles).find(
                 key => key.toLowerCase() === normalizedInput || key.toLowerCase().includes(normalizedInput)
             );
 
             if (matchingRoleName) {
                 game.roleName = matchingRoleName;
-                
                 selectedRoleLocked = true;
-                
                 const roleData = roles[matchingRoleName];
+                
                 const displayArea = document.getElementById('role-script-display');
                 
+                // 设置常驻卡片内容
                 setConstantRoleDisplay(roleData, matchingRoleName);
                 
+                // 显示常驻卡片
                 document.getElementById('constant-role-display').style.display = 'block';
 
-                // ⭐ 优化：在剧本卡片中显示 memoir
-                displayArea.innerHTML = `
+                // 增加专属回忆的显示
+                let scriptHtml = `
                     <h2>你好，${matchingRoleName}。这是你的剧本:</h2>
                     <p><strong>【你的身份】</strong> <span>${roleData.identity}</span></p>
                     <p><strong>【你的秘密】</strong> <span>${roleData.secret}</span></p>
                     <p><strong>【你的任务】</strong> <span>${roleData.task}</span></p>
-                    <div style="border-left: 3px solid var(--color-accent); padding-left: 10px; margin-top: 15px;">
-                        <p><strong>【专属回忆】</strong> <span>${roleData.memoir}</span></p>
-                    </div>
-                    <button class="action-btn" id="read-done-btn" style="margin-top: 20px;">已阅读，进入故事</button>
                 `;
+                
+                if (roleData.memoir) {
+                     scriptHtml += `<p style="color:var(--color-accent);"><strong>${roleData.memoir}</strong></p>`;
+                }
+                
+                scriptHtml += `<button class="action-btn" id="read-done-btn">已阅读，进入故事</button>`;
+
+                displayArea.innerHTML = scriptHtml;
                 
                 speakNarrative(`你好，${matchingRoleName}。你的身份是${roleData.identity}。你的秘密是${roleData.secret}。你的任务是${roleData.task}。`);
 
@@ -1566,7 +1741,7 @@
                 };
 
             } else {
-                alert(`角色名输入错误，请检查。可输入角色之一：${Object.keys(roles).join('、')}`);
+                alert(`角色名输入错误，请检查。请确保输入的是以下角色之一：${Object.keys(roles).join('、')}`);
             }
         };
         
@@ -1603,7 +1778,6 @@
             loadNotes(); 
         }
 
-        // 菜单弹窗逻辑
         const menuModal = document.getElementById('menu-modal');
         document.getElementById('menu-btn').onclick = () => {
             menuModal.style.display = "block";
@@ -1615,12 +1789,6 @@
             if (event.target == menuModal) {
                 menuModal.style.display = "none";
             }
-        };
-
-        // P3 修复: 添加菜单返回案件列表/重置游戏的功能
-        document.getElementById('menu-back-to-case').onclick = () => {
-            menuModal.style.display = "none";
-            goToScene('scene-case-select'); 
         };
 
         // 页面加载完成时渲染案件列表和绑定笔记事件
